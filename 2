@@ -1,0 +1,61 @@
+from sys import stdin
+from copy import deepcopy
+import numpy as n 
+
+class Matrix:
+    
+    def __init__(self, list_of_lists): 
+        self.matrix = deepcopy(list_of_lists)
+
+    def __str__(self):
+        return '\n'.join('\t'.join(map(str, row)) for row in self.matrix)
+        
+    def __getitem__(self, idx): 
+        return self.matrix[idx]
+
+    #1>2
+    def __gt__(self, other):
+        return n.linalg.det(self.matrix) > n.linalg.det(other.matrix)
+
+    #1=2
+    def __eq__(self, other):
+        return n.linalg.det(self.matrix) == n.linalg.det(other.matrix)
+
+    #1<2
+    def __lt__(self, other):
+        return n.linalg.det(self.matrix) < n.linalg.det(other.matrix)
+    
+    #+
+    def __add__(self, other):
+        other = Matrix(other)
+        num = []
+        res = []
+        for i in range(len(self.matrix)):
+            for j in range(len(self.matrix[0])):
+                summa = other[i][j] + self.matrix[i][j]
+                num.append(summa)
+                if len(num) == len(self.matrix):
+                    res.append(num)
+                    num = []
+        return Matrix(res)
+        
+    #*
+    def __mul__(self, other):
+        res = Matrix([[0,0],[0,0]])
+        for i in range(len(self.matrix)):
+            for j in range(len(other.matrix[0])):
+                for k in range(len(other.matrix)):
+                    res[i][j] += self[i][k] * other[k][j]
+        return res
+        
+m1 = Matrix([[2,5],[3,1]])
+m2 = Matrix([[1,1],[4,5]])
+
+print(m1 > m2," - 1 > 2")
+print(m1 == m2, " - 1 = 2")
+print(m1 < m2, " - 1 < 2")
+
+print("Сложение матриц:")
+print(m1+m2)
+print("Умножение матриц:")
+print(m1*m2)
